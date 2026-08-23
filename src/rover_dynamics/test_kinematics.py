@@ -1,3 +1,5 @@
+import math
+
 from rover_dynamics.kinematic_model import RoverKinematicModel
 
 
@@ -6,20 +8,21 @@ model = RoverKinematicModel(
     track_width=0.60
 )
 
-# Initial state: x, y, theta
+
+# --------------------------------------------------
+# Test 1 - Straight line
+# --------------------------------------------------
+
 state = [0.0, 0.0, 0.0]
 
-# Both sides rotate at the same speed
-omega_left = -2.0
+omega_left = 2.0
 omega_right = 2.0
 
-# Simulation settings
 dt = 0.1
 simulation_time = 10.0
-
 steps = int(simulation_time / dt)
 
-for i in range(steps):
+for _ in range(steps):
     state = model.step(
         state,
         omega_left,
@@ -27,9 +30,55 @@ for i in range(steps):
         dt
     )
 
-    print(
-        f"time = {(i + 1) * dt:.1f} s, "
-        f"x = {state[0]:.3f} m, "
-        f"y = {state[1]:.3f} m, "
-        f"theta = {state[2]:.3f} rad"
+print("Test 1 - Straight line")
+print("x =", state[0])
+print("y =", state[1])
+print("theta =", state[2])
+print()
+
+
+# --------------------------------------------------
+# Test 2 - Circular motion
+# --------------------------------------------------
+
+state = [0.0, 0.0, 0.0]
+
+omega_left = 1.0
+omega_right = 2.0
+
+for _ in range(steps):
+    state = model.step(
+        state,
+        omega_left,
+        omega_right,
+        dt
     )
+
+print("Test 2 - Circular motion")
+print("x =", state[0])
+print("y =", state[1])
+print("theta =", state[2])
+print()
+
+
+# --------------------------------------------------
+# Test 3 - Turn in place
+# --------------------------------------------------
+
+state = [0.0, 0.0, 0.0]
+
+omega_left = -2.0
+omega_right = 2.0
+
+for _ in range(steps):
+    state = model.step(
+        state,
+        omega_left,
+        omega_right,
+        dt
+    )
+
+print("Test 3 - Turn in place")
+print("x =", state[0])
+print("y =", state[1])
+print("theta =", state[2])
