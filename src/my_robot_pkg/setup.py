@@ -30,14 +30,18 @@ setup(
         ),
         (
             os.path.join('share', package_name, 'config'),
-            glob('config/*'),
-),
+            glob('config/*.rviz'),
+        ),
+        (
+            os.path.join('share', package_name, 'config', 'robot'),
+            glob('config/robot/*.yaml'),
+        ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='user',
     maintainer_email='user@todo.todo',
-    description='ROS 2 agricultural rover simulation package',
+    description='ROS 2 agricultural rover package',
     license='Apache-2.0',
     extras_require={
         'test': [
@@ -46,11 +50,6 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'publisher_node = my_robot_pkg.publisher_node:main',
-            'subscriber_node = my_robot_pkg.subscriber_node:main',
-            'wheel_speed_publisher = my_robot_pkg.wheel_speed_publisher:main',
-            'wheel_speed_subscriber = my_robot_pkg.wheel_speed_subscriber:main',
-            'cmd_vel_publisher = my_robot_pkg.cmd_vel_publisher:main',
             'simulated_imu_publisher = my_robot_pkg.simulated_imu_publisher:main',
         ],
     },

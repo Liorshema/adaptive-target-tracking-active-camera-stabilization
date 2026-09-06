@@ -12,7 +12,7 @@ from rover_dynamics.camera_world_pose import camera_pose_in_world
 # --------------------------------------------------
 
 wheel_radius = 0.15
-track_width = 0.60
+track_width = 0.68
 mass = 20.0
 yaw_inertia = 2.0
 
@@ -49,7 +49,7 @@ rover = RoverDynamicModel(
 arm = ArmKinematics(
     link1_length=0.40,
     link2_length=0.36,
-    wrist_length=0.10
+    wrist_length=0.12
 )
 
 

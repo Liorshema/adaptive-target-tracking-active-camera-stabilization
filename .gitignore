@@ -3,6 +3,9 @@ build/
 install/
 log/
 
+# Experiment outputs
+results/
+
 # Python
 __pycache__/
 *.pyc
