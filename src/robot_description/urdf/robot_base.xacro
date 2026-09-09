@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+  <!-- =============================================== -->
+  <!-- Robot base                                      -->
+  <!-- =============================================== -->
+
+  <xacro:macro name="robot_base" params="robot">
+
+    <!-- Body parameters -->
+
+    <xacro:property
+      name="body_length"
+      value="${robot['body']['length']}"/>
+
+    <xacro:property
+      name="body_width"
+      value="${robot['body']['width']}"/>
+
+    <xacro:property
+      name="body_height"
+      value="${robot['body']['height']}"/>
+
+    <xacro:property
+      name="body_mass"
+      value="${robot['body']['mass']}"/>
+
+
+    <!-- Wheel parameters -->
+
+    <xacro:property
+      name="wheel_radius"
+      value="${robot['wheels']['radius']}"/>
+
+    <xacro:property
+      name="wheel_width"
+      value="${robot['wheels']['width']}"/>
+
+    <xacro:property
+      name="wheel_mass"
+      value="${robot['wheels']['mass']}"/>
+
+    <xacro:property
+      name="wheel_x"
+      value="${robot['wheels']['x_offset']}"/>
+
+    <xacro:property
+      name="wheel_y"
+      value="${robot['wheels']['y_offset']}"/>
+
+    <xacro:property
+      name="wheel_z"
+      value="${robot['wheels']['z_offset']}"/>
+
+
+    <xacro:property
+      name="wheel_mu"
+      value="${robot['simulation']['friction']['wheel_mu']}"/>
+
+    <xacro:property
+        name="wheel_mu2"
+        value="${robot['simulation']['friction']['wheel_mu2']}"/>
+
+
+
+
+    <!-- ============================================= -->
+    <!-- Wheel macro                                   -->
+    <!-- ============================================= -->
+
+    <xacro:macro name="wheel" params="name x y">
+
+      <link name="${name}">
+
+        <visual>
+
+          <geometry>
+            <cylinder
+              radius="${wheel_radius}"
+              length="${wheel_width}"/>
+          </geometry>
+
+          <material name="black"/>
+
+        </visual>
+
+
+        <collision>
+
+          <geometry>
+            <cylinder
+              radius="${wheel_radius}"
+              length="${wheel_width}"/>
+          </geometry>
+
+        </collision>
+
+
+        <xacro:cylinder_inertial
+          mass="${wheel_mass}"
+          radius="${wheel_radius}"
+          length="${wheel_width}"/>
+
+      </link>
+
+      <gazebo reference="${name}">
+        <mu1>${wheel_mu}</mu1>
+        <mu2>${wheel_mu2}</mu2>
+      </gazebo>
+
+
+      <joint name="${name}_joint" type="continuous">
+
+        <parent link="base_link"/>
+        <child link="${name}"/>
+
+        <origin
+          xyz="${x} ${y} ${wheel_z}"
+          rpy="1.5708 0 0"/>
+
+        <axis xyz="0 0 -1"/>
+
+      </joint>
+
+    </xacro:macro>
+
+
+    <!-- ============================================= -->
+    <!-- Base link                                     -->
+    <!-- ============================================= -->
+
+    <link name="base_link">
+
+      <visual>
+
+        <geometry>
+          <box
+            size="${body_length}
+                  ${body_width}
+                  ${body_height}"/>
+        </geometry>
+
+        <material name="blue"/>
+
+      </visual>
+
+
+      <collision>
+
+        <geometry>
+          <box
+            size="${body_length}
+                  ${body_width}
+                  ${body_height}"/>
+        </geometry>
+
+      </collision>
+
+
+      <xacro:box_inertial
+        mass="${body_mass}"
+        length="${body_length}"
+        width="${body_width}"
+        height="${body_height}"/>
+
+    </link>
+
+
+    <!-- ============================================= -->
+    <!-- Wheels                                        -->
+    <!-- ============================================= -->
+
+    <xacro:wheel
+      name="front_left_wheel"
+      x="${wheel_x}"
+      y="${wheel_y}"/>
+
+    <xacro:wheel
+      name="front_right_wheel"
+      x="${wheel_x}"
+      y="${-wheel_y}"/>
+
+    <xacro:wheel
+      name="rear_left_wheel"
+      x="${-wheel_x}"
+      y="${wheel_y}"/>
+
+    <xacro:wheel
+      name="rear_right_wheel"
+      x="${-wheel_x}"
+      y="${-wheel_y}"/>
+
+  </xacro:macro>
+
+</robot>
