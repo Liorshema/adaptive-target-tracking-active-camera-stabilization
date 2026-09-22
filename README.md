@@ -1,60 +1,73 @@
-# Agricultural Robot ROS 2 Workspace
+Adaptive Target Tracking & Active Camera Stabilization
 
-This workspace contains three packages for robot description, mathematical modeling, and Gazebo simulation with experiment comparison. The tables below document every Python script/module under `src`, including launch, packaging, and test files. Paths are relative to each package folder; inputs and outputs describe the current implementation.
+ROS 2 / Gazebo project for adaptive 3D target tracking using a mobile manipulator with a wheeled base, robotic arm, and camera.
 
-For model functions, distances are in meters, angles in radians, time in seconds, forces in newtons, and torques in N·m unless stated otherwise. Library modules return Python values and do not publish ROS topics.
+The system estimates the robot and target states, predicts future target motion using classical and learned models, and coordinates the mobile base and arm to keep the target smoothly framed inside the camera field of view.
 
-## `robot_description`
+Main Features
+ROS 2 Jazzy + Gazebo simulation
+Mobile base, robotic arm, and onboard camera
+Robot and target state estimation
+Classical target motion prediction
+Sequential machine learning prediction
+Adaptive classical-ML fusion
+Lightweight online adaptation
+Whole-body base-arm coordination
+Camera tracking and stabilization
+Joint, velocity, actuator, and field-of-view constraints
+Reproducible tracking experiments and evaluation
+System Architecture
+Perception
+    ↓
+State Estimation
+    ↓
+Target Prediction
+    ↓
+Robot Models
+    ↓
+Whole-Body Control
+    ↓
+Low-Level Control
+    ↓
+Gazebo / Robot
 
-Located in [src/robot_description](src/robot_description). Contains the robot URDF/Xacro, physical configuration, RViz configuration, and a simulated IMU utility.
+The robot model combines the motion of the mobile base and robotic arm to determine the camera pose and velocity. The controller then coordinates both subsystems to follow the predicted target trajectory while respecting physical and visibility constraints.
 
-| Script | Description | Input | Output |
-| --- | --- | --- | --- |
-| [simulated_imu_publisher.py](src/robot_description/robot_description/simulated_imu_publisher.py) | Publishes fixed IMU readings for a stationary, level robot at 10 Hz. | ROS clock; no subscriptions or sensor input. | `/simulated_imu` (`sensor_msgs/msg/Imu`), frame `base_link`: identity orientation, zero angular velocity, and Z acceleration of 9.81 m/s². |
-| [launch/display.launch.py](src/robot_description/launch/display.launch.py) | Opens the robot in RViz with a GUI for adjusting joint positions. | `urdf/simple_robot.urdf.xacro`, its referenced robot configuration, and `config/robot.rviz`; joint positions from the GUI. | Starts robot state publisher, joint state publisher GUI, and RViz; the launched nodes provide robot description, joint states, and TF transforms. |
-| [setup.py](src/robot_description/setup.py) | Defines Python packaging and installs the description assets and IMU executable. | Package source, `package.xml`, resource marker, launch files, URDF/Xacro files, and configuration files. | Installed package/assets and the `simulated_imu_publisher` console entry point when built/installed. |
-| [__init__.py](src/robot_description/robot_description/__init__.py) | Empty Python package initializer. | Package import. | Importable `robot_description` namespace; no runtime output. |
-| [test/test_flake8.py](src/robot_description/test/test_flake8.py) | Checks Python style with the ament Flake8 wrapper. | Package Python source and linter configuration. | Pytest pass/fail result and style diagnostics. |
-| [test/test_pep257.py](src/robot_description/test/test_pep257.py) | Checks Python docstring conventions with ament PEP 257. | Package and test Python source. | Pytest pass/fail result and docstring diagnostics. |
-| [test/test_copyright.py](src/robot_description/test/test_copyright.py) | Defines a copyright-header check that is currently disabled with a skip decorator. | Package and test source if enabled. | Currently a pytest skipped result; copyright diagnostics and pass/fail if enabled. |
+Packages
+robot_description   Robot geometry, URDF/Xacro, sensors and physical parameters
+robot_simulation    Gazebo worlds, target motion and disturbances
+robot_models        Kinematics, dynamics, geometry and constraints
+robot_perception    Camera-based target measurements
+robot_estimation    Robot and target state estimation
+robot_prediction    Classical, learned and hybrid prediction
+robot_learning      Offline ML training and evaluation
+robot_control       Whole-body and low-level controllers
+robot_evaluation    Tracking, prediction and control metrics
+robot_experiments   Experiment and benchmark management
+robot_interface     Interactive experiment interface
+robot_bringup       System launch and configuration
+Current Development
 
-## `robot_dynamics`
+Current focus is the robot_models package, including:
 
-Located in [src/robot_dynamics](src/robot_dynamics). Provides reusable Python models for wheel actuation, base motion, arm kinematics, and camera pose. This package defines no ROS console executables.
+common
+mobile
+arm
+whole_body
+camera
+target
+reference
+task_space
+constraints
 
-| Script | Description | Input | Output |
-| --- | --- | --- | --- |
-| [actuator_model.py](src/robot_dynamics/robot_dynamics/actuator_model.py) | Converts motor current to motor torque and applies gearbox ratio and efficiency to obtain wheel torque. | Torque constant (N·m/A), gear ratio, efficiency, and motor current (A) or motor torque. | Motor torque or wheel torque, depending on the method called. |
-| [wheel_model.py](src/robot_dynamics/robot_dynamics/wheel_model.py) | Converts wheel torque into longitudinal traction force using the wheel radius. | Wheel radius and wheel torque. | Traction force: torque divided by radius. |
-| [slip_model.py](src/robot_dynamics/robot_dynamics/slip_model.py) | Reduces ideal traction force by a fixed slip ratio. | Slip ratio from 0 to 1 and ideal force. | Effective force `(1 - slip_ratio) * ideal_force`; raises `ValueError` for an invalid ratio. |
-| [kinematic_model.py](src/robot_dynamics/robot_dynamics/kinematic_model.py) | Converts body and wheel velocities and propagates planar differential-drive pose with Euler integration. | Wheel radius, track width; body velocities `(v, omega)` or left/right wheel speeds (rad/s); state `[x, y, theta]` and time step for integration. | Converted velocities, pose derivatives, or next state `[x, y, theta]`, depending on the method. |
-| [dynamic_model.py](src/robot_dynamics/robot_dynamics/dynamic_model.py) | Converts left/right traction forces into body force and yaw torque, then integrates planar motion with Euler integration. | Mass (kg), yaw inertia (kg·m²), track width; left/right total forces; state `[x, y, theta, v, omega]` and time step. | Body force/yaw torque, state derivatives, or next state `[x, y, theta, v, omega]`. |
-| [arm_kinematics.py](src/robot_dynamics/robot_dynamics/arm_kinematics.py) | Computes forward kinematics for the four-joint camera arm. | Link 1, link 2, and wrist lengths; base yaw `q0`, shoulder pitch `q1`, elbow pitch `q2`, and wrist pitch `q3`. | Tuple `(x_camera, y_camera, z_camera, camera_pitch)` relative to the arm origin. |
-| [camera_world_pose.py](src/robot_dynamics/robot_dynamics/camera_world_pose.py) | Transforms the arm camera position into world coordinates using the planar robot pose and a height offset. | Robot X/Y/yaw, arm camera X/Y/Z, arm base yaw, camera pitch, and optional robot base height (default 0). | Tuple `(camera_x_world, camera_y_world, camera_z_world, camera_yaw_world, camera_pitch_world)`. |
-| [robot_config.py](src/robot_dynamics/robot_dynamics/robot_config.py) | Loads robot YAML into immutable parameter dataclasses and exposes derived inertia and track-width properties. | Path to robot YAML containing body, wheels, arm, and actuator settings, such as `robot_description/config/robot/robot.yaml`. | A `RobotParameters` object with nested parameter objects and calculated properties. |
-| [test_integration.py](src/robot_dynamics/test_integration.py) | Runs a fixed two-second actuator → wheel → base dynamics example, then computes the arm camera's world pose. This is a demonstration with printed results, without test assertions. | Hard-coded physical parameters, left/right motor currents (2.0/2.5 A), arm angles, initial state, and 0.1-second time step. | Console report of currents, torques, forces, final robot state, arm angles, and camera world pose; reported angles are in degrees. |
-| [setup.py](src/robot_dynamics/setup.py) | Defines packaging for the model library. | Python package source, `package.xml`, and resource marker. | Installed `robot_dynamics` library and package metadata; no console entry points. |
-| [__init__.py](src/robot_dynamics/robot_dynamics/__init__.py) | Empty Python package initializer. | Package import. | Importable `robot_dynamics` namespace; no runtime output. |
-| [test/test_flake8.py](src/robot_dynamics/test/test_flake8.py) | Checks Python style with the ament Flake8 wrapper. | Package Python source and linter configuration. | Pytest pass/fail result and style diagnostics. |
-| [test/test_pep257.py](src/robot_dynamics/test/test_pep257.py) | Checks Python docstring conventions with ament PEP 257. | Package and test Python source. | Pytest pass/fail result and docstring diagnostics. |
-| [test/test_copyright.py](src/robot_dynamics/test/test_copyright.py) | Defines a copyright-header check that is currently disabled with a skip decorator. | Package and test source if enabled. | Currently a pytest skipped result; copyright diagnostics and pass/fail if enabled. |
+The project is developed incrementally, beginning with a complete classical baseline and later adding learned prediction, adaptive fusion, online adaptation, and controller comparison.
 
-## `robot_simulation`
+Environment
+Ubuntu 24.04
+ROS 2 Jazzy
+Gazebo
+Python 3
+NumPy
+Goal
 
-Located in [src/robot_simulation](src/robot_simulation). Runs Gazebo alongside a nominal kinematic model, sends experiment commands, and compares the resulting odometry.
-
-| Script | Description | Input | Output |
-| --- | --- | --- | --- |
-| [nominal_kinematics_node.py](src/robot_simulation/robot_simulation/nominal_kinematics_node.py) | Integrates the ideal base pose from velocity commands, starting at the origin. Uses a 100 Hz timer and actual elapsed ROS time. | `/cmd_vel` (`geometry_msgs/msg/Twist`, `linear.x` and `angular.z`), ROS clock, and wheel geometry from `robot_description/config/robot/robot.yaml`. | `/nominal/odom` (`nav_msgs/msg/Odometry`) with pose and commanded velocities, using `odom` and `base_link` frame IDs. |
-| [experiment_runner.py](src/robot_simulation/robot_simulation/experiment_runner.py) | Executes timed velocity segments from YAML at 50 Hz, then stops the robot. Waits for at least two command subscribers and one experiment-status subscriber. | `config_file` ROS parameter (defaults to installed `config/experiments/flat_baseline.yaml`); experiment name, terrain label, and segments containing duration, linear velocity, and angular velocity; ROS clock. | `/cmd_vel` (`geometry_msgs/msg/Twist`), `/experiment/active` (`std_msgs/msg/Bool`), and progress logs; sends zero velocity and inactive status before shutdown. |
-| [straight_test.py](src/robot_simulation/robot_simulation/straight_test.py) | Sends a fixed straight-motion command of 0.5 m/s for five seconds at 10 Hz, then stops. Waits for at least two command subscribers. | Hard-coded speed/duration, subscriber availability, and ROS clock; no subscribed topics. | `/cmd_vel` (`geometry_msgs/msg/Twist`) and start/finish logs; sends a final zero command and shuts down. Does not publish experiment-active status. |
-| [state_comparator.py](src/robot_simulation/robot_simulation/state_comparator.py) | Time-synchronizes reference and estimated odometry and records reference-minus-estimate errors while an experiment is active; yaw differences are wrapped. | Installed `config/comparison/baseline.yaml`; configured odometry topics (defaults: `/model/simple_robot/odometry` and `/nominal/odom`, both `nav_msgs/msg/Odometry`); `/experiment/active` (`std_msgs/msg/Bool`). | On active → inactive: logs RMSE, MAE, maximum absolute error, and signed final error per variable; saves samples to `~/ros2_ws/results/<comparison_name>_<YYYYMMDD_HHMMSS>.csv` if samples exist. |
-| [metrics.py](src/robot_simulation/robot_simulation/metrics.py) | Provides mean, mean absolute error, root mean square error, maximum absolute error, and final-error helpers. | A Python list of numeric values/errors. | One numeric result per call; empty lists return `0.0`, and final error retains its sign. |
-| [launch/sim_nominal.launch.py](src/robot_simulation/launch/sim_nominal.launch.py) | Generates the world and starts Gazebo, robot spawning/state publication, the ROS–Gazebo bridge, nominal model, and comparator. | `terrain_config` launch argument (defaults to `config/terrain/flat.yaml`), `worlds/greenhouse.sdf.xacro`, robot Xacro/YAML, and comparator configuration. | `/tmp/greenhouse_generated.sdf` and running simulation nodes; bridges `/cmd_vel` to Gazebo and odometry plus `/clock` to ROS; starts nominal odometry and comparison. |
-| [setup.py](src/robot_simulation/setup.py) | Defines packaging and installs simulation assets and four ROS executables. | Package source, metadata/resource marker, launch files, world files, and comparison/experiment/terrain YAML files. | Installed package/assets and `nominal_kinematics_node`, `straight_test`, `state_comparator`, and `experiment_runner` console entry points. |
-| [__init__.py](src/robot_simulation/robot_simulation/__init__.py) | Empty Python package initializer. | Package import. | Importable `robot_simulation` namespace; no runtime output. |
-| [test/test_flake8.py](src/robot_simulation/test/test_flake8.py) | Checks Python style with the ament Flake8 wrapper. | Package Python source and linter configuration. | Pytest pass/fail result and style diagnostics. |
-| [test/test_pep257.py](src/robot_simulation/test/test_pep257.py) | Checks Python docstring conventions with ament PEP 257. | Package and test Python source. | Pytest pass/fail result and docstring diagnostics. |
-| [test/test_copyright.py](src/robot_simulation/test/test_copyright.py) | Defines a copyright-header check that is currently disabled with a skip decorator. | Package and test source if enabled. | Currently a pytest skipped result; copyright diagnostics and pass/fail if enabled. |
-
-The simulation launch does not start a command generator: run `experiment_runner` separately to drive a recorded comparison. Its YAML `terrain` value is logged as a label; the launch argument `terrain_config` selects the actual terrain. The comparator CSV contains `time` plus `reference_<variable>`, `estimate_<variable>`, and `error_<variable>` columns for each configured variable.
+The main goal is to study how target-motion prediction and adaptation affect closed-loop visual tracking, and how coordinated base-arm control can use those predictions to maintain smooth and stable camera tracking.
