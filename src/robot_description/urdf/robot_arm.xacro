@@ -106,7 +106,23 @@
       value="${robot['arm']['camera']['mass']}"/>
 
 
+    <!-- Joints -->
 
+    <xacro:property
+      name="base_yaw_joint_cfg"
+      value="${robot['arm']['joints']['base_yaw']}"/>
+
+    <xacro:property
+      name="shoulder_joint_cfg"
+      value="${robot['arm']['joints']['shoulder']}"/>
+
+    <xacro:property
+      name="elbow_joint_cfg"
+      value="${robot['arm']['joints']['elbow']}"/>
+
+    <xacro:property
+      name="wrist_joint_cfg"
+      value="${robot['arm']['joints']['wrist']}"/>
 
 
     <!-- ============================================= -->
@@ -116,7 +132,6 @@
     <link name="arm_base">
 
       <visual>
-
         <geometry>
           <cylinder
             radius="${arm_base_radius}"
@@ -124,18 +139,15 @@
         </geometry>
 
         <material name="gray"/>
-
       </visual>
 
 
       <collision>
-
         <geometry>
           <cylinder
             radius="${arm_base_radius}"
             length="${arm_base_height}"/>
         </geometry>
-
       </collision>
 
 
@@ -156,16 +168,19 @@
         xyz="0 0 ${body_height / 2.0 + arm_base_height / 2.0}"
         rpy="0 0 0"/>
 
-      <axis xyz="0 0 1"/>
+      <axis
+        xyz="${base_yaw_joint_cfg['axis'][0]}
+             ${base_yaw_joint_cfg['axis'][1]}
+             ${base_yaw_joint_cfg['axis'][2]}"/>
 
       <limit
-        lower="-3.14"
-        upper="3.14"
-        effort="20"
-        velocity="1.0"/>
+        lower="${base_yaw_joint_cfg['lower']}"
+        upper="${base_yaw_joint_cfg['upper']}"
+        effort="${base_yaw_joint_cfg['effort']}"
+        velocity="${base_yaw_joint_cfg['velocity']}"/>
 
       <dynamics
-        damping="0.1"
+        damping="${base_yaw_joint_cfg['damping']}"
         friction="0.0"/>
 
     </joint>
@@ -230,16 +245,19 @@
         xyz="0 0 ${arm_base_height / 2.0}"
         rpy="0 0 0"/>
 
-      <axis xyz="0 -1 0"/>
+      <axis
+        xyz="${shoulder_joint_cfg['axis'][0]}
+             ${shoulder_joint_cfg['axis'][1]}
+             ${shoulder_joint_cfg['axis'][2]}"/>
 
       <limit
-        lower="-1.57"
-        upper="1.57"
-        effort="20"
-        velocity="1.0"/>
+        lower="${shoulder_joint_cfg['lower']}"
+        upper="${shoulder_joint_cfg['upper']}"
+        effort="${shoulder_joint_cfg['effort']}"
+        velocity="${shoulder_joint_cfg['velocity']}"/>
 
       <dynamics
-        damping="0.2"
+        damping="${shoulder_joint_cfg['damping']}"
         friction="0.0"/>
 
     </joint>
@@ -304,16 +322,19 @@
         xyz="${arm_link_1_length} 0 0"
         rpy="0 0 0"/>
 
-      <axis xyz="0 -1 0"/>
+      <axis
+        xyz="${elbow_joint_cfg['axis'][0]}
+             ${elbow_joint_cfg['axis'][1]}
+             ${elbow_joint_cfg['axis'][2]}"/>
 
       <limit
-        lower="-1.57"
-        upper="1.57"
-        effort="20"
-        velocity="1.0"/>
+        lower="${elbow_joint_cfg['lower']}"
+        upper="${elbow_joint_cfg['upper']}"
+        effort="${elbow_joint_cfg['effort']}"
+        velocity="${elbow_joint_cfg['velocity']}"/>
 
       <dynamics
-        damping="0.2"
+        damping="${elbow_joint_cfg['damping']}"
         friction="0.0"/>
 
     </joint>
@@ -378,16 +399,19 @@
         xyz="${arm_link_2_length} 0 0"
         rpy="0 0 0"/>
 
-      <axis xyz="0 -1 0"/>
+      <axis
+        xyz="${wrist_joint_cfg['axis'][0]}
+             ${wrist_joint_cfg['axis'][1]}
+             ${wrist_joint_cfg['axis'][2]}"/>
 
       <limit
-        lower="-1.57"
-        upper="1.57"
-        effort="10"
-        velocity="1.5"/>
+        lower="${wrist_joint_cfg['lower']}"
+        upper="${wrist_joint_cfg['upper']}"
+        effort="${wrist_joint_cfg['effort']}"
+        velocity="${wrist_joint_cfg['velocity']}"/>
 
       <dynamics
-        damping="0.15"
+        damping="${wrist_joint_cfg['damping']}"
         friction="0.0"/>
 
     </joint>
@@ -400,7 +424,6 @@
     <link name="camera_link">
 
       <visual>
-
         <geometry>
           <box
             size="${camera_length}
@@ -409,19 +432,16 @@
         </geometry>
 
         <material name="black"/>
-
       </visual>
 
 
       <collision>
-
         <geometry>
           <box
             size="${camera_length}
                   ${camera_width}
                   ${camera_height}"/>
         </geometry>
-
       </collision>
 
 

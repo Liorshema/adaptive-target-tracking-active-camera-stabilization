@@ -23,6 +23,34 @@ def skew(vector: np.ndarray) -> np.ndarray:
     )
 
 
+def axis_angle_rotation(
+    axis: np.ndarray,
+    angle: float,
+) -> np.ndarray:
+    """Return a rotation matrix from axis-angle using Rodrigues' formula."""
+
+    axis = np.asarray(axis, dtype=float)
+
+    if axis.shape != (3,):
+        raise ValueError("axis must have shape (3,)")
+
+    norm = np.linalg.norm(axis)
+
+    if np.isclose(norm, 0.0):
+        raise ValueError("axis must be non-zero")
+
+    axis = axis / norm
+
+    axis_skew = skew(axis)
+
+    return (
+        np.eye(3)
+        + np.sin(angle) * axis_skew
+        + (1.0 - np.cos(angle))
+        * (axis_skew @ axis_skew)
+    )
+
+
 def is_rotation_matrix(
     rotation: np.ndarray,
     atol: float = 1e-8,
@@ -54,46 +82,25 @@ def is_rotation_matrix(
 def rotation_x(angle: float) -> np.ndarray:
     """Return rotation matrix about the x-axis."""
 
-    c = np.cos(angle)
-    s = np.sin(angle)
-
-    return np.array(
-        [
-            [1.0, 0.0, 0.0],
-            [0.0, c, -s],
-            [0.0, s, c],
-        ],
-        dtype=float,
+    return axis_angle_rotation(
+        axis=np.array([1.0, 0.0, 0.0]),
+        angle=angle,
     )
 
 
 def rotation_y(angle: float) -> np.ndarray:
     """Return rotation matrix about the y-axis."""
 
-    c = np.cos(angle)
-    s = np.sin(angle)
-
-    return np.array(
-        [
-            [c, 0.0, s],
-            [0.0, 1.0, 0.0],
-            [-s, 0.0, c],
-        ],
-        dtype=float,
+    return axis_angle_rotation(
+        axis=np.array([0.0, 1.0, 0.0]),
+        angle=angle,
     )
 
 
 def rotation_z(angle: float) -> np.ndarray:
     """Return rotation matrix about the z-axis."""
 
-    c = np.cos(angle)
-    s = np.sin(angle)
-
-    return np.array(
-        [
-            [c, -s, 0.0],
-            [s, c, 0.0],
-            [0.0, 0.0, 1.0],
-        ],
-        dtype=float,
+    return axis_angle_rotation(
+        axis=np.array([0.0, 0.0, 1.0]),
+        angle=angle,
     )
