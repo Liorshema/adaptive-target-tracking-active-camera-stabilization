@@ -465,6 +465,27 @@
 
     </joint>
 
+    <!-- ============================================= -->
+    <!-- Camera optical frame                          -->
+    <!-- ROS optical convention:                       -->
+    <!--   x -> right                                  -->
+    <!--   y -> down                                   -->
+    <!--   z -> forward                                -->
+    <!-- ============================================= -->
+
+    <link name="camera_optical_frame"/>
+
+    <joint name="camera_optical_joint" type="fixed">
+
+      <parent link="camera_link"/>
+      <child link="camera_optical_frame"/>
+
+      <origin
+        xyz="0 0 0"
+        rpy="-1.57079632679 0 -1.57079632679"/>
+
+    </joint>
+
   </xacro:macro>
 
 </robot>

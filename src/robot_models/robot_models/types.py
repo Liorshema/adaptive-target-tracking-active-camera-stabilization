@@ -4,6 +4,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from robot_models.common.rotations import is_rotation_matrix
+
 
 @dataclass
 class Pose:
@@ -13,14 +15,30 @@ class Pose:
     rotation: np.ndarray
 
     def __post_init__(self) -> None:
-        self.position = np.asarray(self.position, dtype=float)
-        self.rotation = np.asarray(self.rotation, dtype=float)
+        self.position = np.asarray(
+            self.position,
+            dtype=float,
+        )
+
+        self.rotation = np.asarray(
+            self.rotation,
+            dtype=float,
+        )
 
         if self.position.shape != (3,):
-            raise ValueError("position must have shape (3,)")
+            raise ValueError(
+                "position must have shape (3,)"
+            )
 
         if self.rotation.shape != (3, 3):
-            raise ValueError("rotation must have shape (3, 3)")
+            raise ValueError(
+                "rotation must have shape (3, 3)"
+            )
+
+        if not is_rotation_matrix(self.rotation):
+            raise ValueError(
+                "rotation must be a valid rotation matrix"
+            )
 
 
 @dataclass
@@ -31,14 +49,25 @@ class Twist:
     angular: np.ndarray
 
     def __post_init__(self) -> None:
-        self.linear = np.asarray(self.linear, dtype=float)
-        self.angular = np.asarray(self.angular, dtype=float)
+        self.linear = np.asarray(
+            self.linear,
+            dtype=float,
+        )
+
+        self.angular = np.asarray(
+            self.angular,
+            dtype=float,
+        )
 
         if self.linear.shape != (3,):
-            raise ValueError("linear must have shape (3,)")
+            raise ValueError(
+                "linear must have shape (3,)"
+            )
 
         if self.angular.shape != (3,):
-            raise ValueError("angular must have shape (3,)")
+            raise ValueError(
+                "angular must have shape (3,)"
+            )
 
     @property
     def vector(self) -> np.ndarray:
@@ -66,6 +95,7 @@ class RobotState:
             self.joint_positions,
             dtype=float,
         )
+
         self.joint_velocities = np.asarray(
             self.joint_velocities,
             dtype=float,
@@ -90,35 +120,69 @@ class TargetState:
     velocity: np.ndarray
 
     def __post_init__(self) -> None:
-        self.position = np.asarray(self.position, dtype=float)
-        self.velocity = np.asarray(self.velocity, dtype=float)
+        self.position = np.asarray(
+            self.position,
+            dtype=float,
+        )
+
+        self.velocity = np.asarray(
+            self.velocity,
+            dtype=float,
+        )
 
         if self.position.shape != (3,):
-            raise ValueError("position must have shape (3,)")
+            raise ValueError(
+                "position must have shape (3,)"
+            )
 
         if self.velocity.shape != (3,):
-            raise ValueError("velocity must have shape (3,)")
+            raise ValueError(
+                "velocity must have shape (3,)"
+            )
 
 
 @dataclass
 class ConstraintSet:
-    """Linear inequality constraint representation."""
+    """Linear inequality constraint representation.
+
+    Represents constraints of the form:
+
+        lower <= matrix @ x <= upper
+    """
 
     matrix: np.ndarray
     lower: np.ndarray
     upper: np.ndarray
 
     def __post_init__(self) -> None:
-        self.matrix = np.asarray(self.matrix, dtype=float)
-        self.lower = np.asarray(self.lower, dtype=float)
-        self.upper = np.asarray(self.upper, dtype=float)
+        self.matrix = np.asarray(
+            self.matrix,
+            dtype=float,
+        )
+
+        self.lower = np.asarray(
+            self.lower,
+            dtype=float,
+        )
+
+        self.upper = np.asarray(
+            self.upper,
+            dtype=float,
+        )
 
         if self.matrix.ndim != 2:
-            raise ValueError("matrix must be two-dimensional")
-
-        if self.lower.ndim != 1 or self.upper.ndim != 1:
             raise ValueError(
-                "lower and upper must be 1D vectors"
+                "matrix must be two-dimensional"
+            )
+
+        if self.lower.ndim != 1:
+            raise ValueError(
+                "lower must be a 1D vector"
+            )
+
+        if self.upper.ndim != 1:
+            raise ValueError(
+                "upper must be a 1D vector"
             )
 
         if self.matrix.shape[0] != self.lower.size:
@@ -129,4 +193,9 @@ class ConstraintSet:
         if self.lower.shape != self.upper.shape:
             raise ValueError(
                 "lower and upper must have the same shape"
+            )
+
+        if np.any(self.lower > self.upper):
+            raise ValueError(
+                "lower bounds must not exceed upper bounds"
             )

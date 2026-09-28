@@ -20,7 +20,10 @@ class ArmJacobian:
         link_2_length: float,
         wrist_length: float,
     ) -> None:
-        joint_axes = np.asarray(joint_axes, dtype=float)
+        joint_axes = np.asarray(
+            joint_axes,
+            dtype=float,
+        )
 
         if joint_axes.shape != (self.DOF, 3):
             raise ValueError(
@@ -52,7 +55,7 @@ class ArmJacobian:
         self,
         joint_positions: np.ndarray,
     ) -> np.ndarray:
-        """Return the 6x4 geometric Jacobian."""
+        """Return the 6x4 geometric Jacobian in the robot base frame."""
 
         joint_positions = np.asarray(
             joint_positions,
@@ -83,32 +86,44 @@ class ArmJacobian:
             dtype=float,
         )
 
-        transform = np.eye(4, dtype=float)
+        transform_base_to_current = np.eye(
+            4,
+            dtype=float,
+        )
 
-        joint_positions_world = []
-        joint_axes_world = []
+        joint_positions_base = []
+        joint_axes_base = []
 
-        for axis_local, angle, offset in zip(
+        for axis_local, angle, offset_local in zip(
             self.joint_axes,
             joint_positions,
             joint_offsets,
         ):
-            joint_position = (
-                transform[:3, :3] @ offset
-                + transform[:3, 3]
+            rotation_base_to_current = (
+                transform_base_to_current[:3, :3]
             )
 
-            joint_axis = (
-                transform[:3, :3]
+            translation_base_to_current = (
+                transform_base_to_current[:3, 3]
+            )
+
+            joint_position_base = (
+                rotation_base_to_current
+                @ offset_local
+                + translation_base_to_current
+            )
+
+            joint_axis_base = (
+                rotation_base_to_current
                 @ axis_local
             )
 
-            joint_positions_world.append(
-                joint_position
+            joint_positions_base.append(
+                joint_position_base
             )
 
-            joint_axes_world.append(
-                joint_axis
+            joint_axes_base.append(
+                joint_axis_base
             )
 
             joint_transform = make_transform(
@@ -116,14 +131,15 @@ class ArmJacobian:
                     axis_local,
                     angle,
                 ),
-                position=offset,
+                position=offset_local,
             )
 
-            transform = (
-                transform @ joint_transform
+            transform_base_to_current = (
+                transform_base_to_current
+                @ joint_transform
             )
 
-        camera_offset = np.array(
+        camera_offset_local = np.array(
             [
                 self.wrist_length,
                 0.0,
@@ -132,9 +148,18 @@ class ArmJacobian:
             dtype=float,
         )
 
-        camera_position = (
-            transform[:3, :3] @ camera_offset
-            + transform[:3, 3]
+        rotation_base_to_current = (
+            transform_base_to_current[:3, :3]
+        )
+
+        translation_base_to_current = (
+            transform_base_to_current[:3, 3]
+        )
+
+        camera_position_base = (
+            rotation_base_to_current
+            @ camera_offset_local
+            + translation_base_to_current
         )
 
         jacobian = np.zeros(
@@ -143,22 +168,26 @@ class ArmJacobian:
         )
 
         for index, (
-            joint_position,
-            joint_axis,
+            joint_position_base,
+            joint_axis_base,
         ) in enumerate(
             zip(
-                joint_positions_world,
-                joint_axes_world,
+                joint_positions_base,
+                joint_axes_base,
             )
         ):
+            joint_to_camera_base = (
+                camera_position_base
+                - joint_position_base
+            )
+
             jacobian[:3, index] = np.cross(
-                joint_axis,
-                camera_position
-                - joint_position,
+                joint_axis_base,
+                joint_to_camera_base,
             )
 
             jacobian[3:, index] = (
-                joint_axis
+                joint_axis_base
             )
 
         return jacobian
