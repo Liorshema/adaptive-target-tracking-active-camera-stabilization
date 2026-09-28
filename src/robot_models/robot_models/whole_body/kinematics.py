@@ -1,42 +1,53 @@
-"""Whole-body kinematics for the mobile manipulator."""
+"""Whole-body forward kinematics."""
 
 import numpy as np
 
+from robot_models.interfaces.robot_model import RobotModel
+
 
 class WholeBodyKinematics:
-    """Combine mobile-base and arm kinematics."""
+    """Compute end-effector pose for a composed robot model."""
 
     @staticmethod
-    def camera_transform_world(
+    def compute(
+        robot_model: RobotModel,
         transform_world_base: np.ndarray,
-        transform_base_camera: np.ndarray,
+        joint_positions: np.ndarray,
     ) -> np.ndarray:
-        """Compute the camera pose in the world frame.
-
-        T_W_E = T_W_B @ T_B_E
         """
+        Return the end-effector transform in the world frame.
 
+        T_W_E = T_W_B @ T_B_E(q)
+        """
         transform_world_base = np.asarray(
             transform_world_base,
             dtype=float,
         )
 
-        transform_base_camera = np.asarray(
-            transform_base_camera,
+        joint_positions = np.asarray(
+            joint_positions,
             dtype=float,
         )
 
         if transform_world_base.shape != (4, 4):
             raise ValueError(
-                "transform_world_base must have shape (4, 4)"
+                'transform_world_base must have shape (4, 4)'
             )
 
-        if transform_base_camera.shape != (4, 4):
+        if joint_positions.shape != (
+            robot_model.manipulator.dof,
+        ):
             raise ValueError(
-                "transform_base_camera must have shape (4, 4)"
+                'joint_positions must match manipulator DOF'
             )
+
+        transform_base_end_effector = (
+            robot_model.manipulator.forward_kinematics(
+                joint_positions
+            )
+        )
 
         return (
             transform_world_base
-            @ transform_base_camera
+            @ transform_base_end_effector
         )

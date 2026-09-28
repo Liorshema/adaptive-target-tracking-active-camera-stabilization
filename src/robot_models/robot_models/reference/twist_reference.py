@@ -17,7 +17,6 @@ class TwistReference:
         dt: float,
     ) -> np.ndarray:
         """Return desired 6D camera twist in the world frame."""
-
         transform_world_camera_current = np.asarray(
             transform_world_camera_current,
             dtype=float,
@@ -30,17 +29,17 @@ class TwistReference:
 
         if transform_world_camera_current.shape != (4, 4):
             raise ValueError(
-                "transform_world_camera_current must have shape (4, 4)"
+                'transform_world_camera_current must have shape (4, 4)'
             )
 
         if transform_world_camera_next.shape != (4, 4):
             raise ValueError(
-                "transform_world_camera_next must have shape (4, 4)"
+                'transform_world_camera_next must have shape (4, 4)'
             )
 
         if dt <= 0.0:
             raise ValueError(
-                "dt must be positive"
+                'dt must be positive'
             )
 
         position_current = (

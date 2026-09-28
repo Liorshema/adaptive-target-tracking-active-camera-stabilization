@@ -14,7 +14,8 @@ class MobileDynamics:
         state: np.ndarray,
         control: np.ndarray,
     ) -> np.ndarray:
-        """Compute x_dot = f(x, u).
+        """
+        Compute x_dot = f(x, u).
 
         State:
             [x, y, theta, v, omega]
@@ -22,15 +23,14 @@ class MobileDynamics:
         Control:
             [a, alpha]
         """
-
         state = np.asarray(state, dtype=float)
         control = np.asarray(control, dtype=float)
 
         if state.shape != (MobileDynamics.STATE_DIM,):
-            raise ValueError("state must have shape (5,)")
+            raise ValueError('state must have shape (5,)')
 
         if control.shape != (MobileDynamics.INPUT_DIM,):
-            raise ValueError("control must have shape (2,)")
+            raise ValueError('control must have shape (2,)')
 
         theta = state[2]
         v = state[3]

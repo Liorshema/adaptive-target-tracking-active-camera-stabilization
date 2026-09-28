@@ -27,17 +27,17 @@ class Pose:
 
         if self.position.shape != (3,):
             raise ValueError(
-                "position must have shape (3,)"
+                'position must have shape (3,)'
             )
 
         if self.rotation.shape != (3, 3):
             raise ValueError(
-                "rotation must have shape (3, 3)"
+                'rotation must have shape (3, 3)'
             )
 
         if not is_rotation_matrix(self.rotation):
             raise ValueError(
-                "rotation must be a valid rotation matrix"
+                'rotation must be a valid rotation matrix'
             )
 
 
@@ -61,18 +61,17 @@ class Twist:
 
         if self.linear.shape != (3,):
             raise ValueError(
-                "linear must have shape (3,)"
+                'linear must have shape (3,)'
             )
 
         if self.angular.shape != (3,):
             raise ValueError(
-                "angular must have shape (3,)"
+                'angular must have shape (3,)'
             )
 
     @property
     def vector(self) -> np.ndarray:
         """Return the 6D twist vector [v, omega]."""
-
         return np.concatenate(
             (
                 self.linear,
@@ -103,12 +102,12 @@ class RobotState:
 
         if self.joint_positions.ndim != 1:
             raise ValueError(
-                "joint_positions must be a 1D vector"
+                'joint_positions must be a 1D vector'
             )
 
         if self.joint_velocities.shape != self.joint_positions.shape:
             raise ValueError(
-                "joint_velocities must match joint_positions shape"
+                'joint_velocities must match joint_positions shape'
             )
 
 
@@ -132,18 +131,19 @@ class TargetState:
 
         if self.position.shape != (3,):
             raise ValueError(
-                "position must have shape (3,)"
+                'position must have shape (3,)'
             )
 
         if self.velocity.shape != (3,):
             raise ValueError(
-                "velocity must have shape (3,)"
+                'velocity must have shape (3,)'
             )
 
 
 @dataclass
 class ConstraintSet:
-    """Linear inequality constraint representation.
+    """
+    Linear inequality constraint representation.
 
     Represents constraints of the form:
 
@@ -172,30 +172,30 @@ class ConstraintSet:
 
         if self.matrix.ndim != 2:
             raise ValueError(
-                "matrix must be two-dimensional"
+                'matrix must be two-dimensional'
             )
 
         if self.lower.ndim != 1:
             raise ValueError(
-                "lower must be a 1D vector"
+                'lower must be a 1D vector'
             )
 
         if self.upper.ndim != 1:
             raise ValueError(
-                "upper must be a 1D vector"
+                'upper must be a 1D vector'
             )
 
         if self.matrix.shape[0] != self.lower.size:
             raise ValueError(
-                "matrix row count must match lower size"
+                'matrix row count must match lower size'
             )
 
         if self.lower.shape != self.upper.shape:
             raise ValueError(
-                "lower and upper must have the same shape"
+                'lower and upper must have the same shape'
             )
 
         if np.any(self.lower > self.upper):
             raise ValueError(
-                "lower bounds must not exceed upper bounds"
+                'lower bounds must not exceed upper bounds'
             )

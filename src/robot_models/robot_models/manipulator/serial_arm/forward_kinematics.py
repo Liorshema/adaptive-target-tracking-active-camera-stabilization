@@ -33,7 +33,7 @@ class ArmForwardKinematics:
 
         if joint_axes.shape != (self.DOF, 3):
             raise ValueError(
-                f"joint_axes must have shape ({self.DOF}, 3)"
+                f'joint_axes must have shape ({self.DOF}, 3)'
             )
 
         axis_norms = np.linalg.norm(
@@ -43,7 +43,7 @@ class ArmForwardKinematics:
 
         if np.any(axis_norms == 0.0):
             raise ValueError(
-                "joint axes must be non-zero"
+                'joint axes must be non-zero'
             )
 
         self.joint_axes = (
@@ -64,7 +64,7 @@ class ArmForwardKinematics:
 
         if np.any(geometry <= 0.0):
             raise ValueError(
-                "all geometry parameters must be positive"
+                'all geometry parameters must be positive'
             )
 
         self.body_height = float(body_height)
@@ -77,7 +77,8 @@ class ArmForwardKinematics:
         self,
         joint_positions: np.ndarray,
     ) -> np.ndarray:
-        """Return T_B_O for the camera optical frame.
+        """
+        Return T_B_O for the camera optical frame.
 
         B:
             Robot base frame.
@@ -85,7 +86,6 @@ class ArmForwardKinematics:
         O:
             Camera optical frame.
         """
-
         joint_positions = np.asarray(
             joint_positions,
             dtype=float,
@@ -93,7 +93,7 @@ class ArmForwardKinematics:
 
         if joint_positions.shape != (self.DOF,):
             raise ValueError(
-                f"joint_positions must have shape ({self.DOF},)"
+                f'joint_positions must have shape ({self.DOF},)'
             )
 
         base_mount_height = (
@@ -155,7 +155,7 @@ class ArmForwardKinematics:
         # camera_link -> camera_optical_frame
         #
         # Matches URDF:
-        # rpy="-pi/2 0 -pi/2"
+        # rpy='-pi/2 0 -pi/2'
         #
         # URDF RPY convention:
         # R = Rz(yaw) @ Ry(pitch) @ Rx(roll)

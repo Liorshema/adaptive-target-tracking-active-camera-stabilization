@@ -1,10 +1,11 @@
 """Camera visibility constraint utilities."""
 
+
 import numpy as np
 
+from robot_models.camera.fov import CameraFOV
 from robot_models.camera.geometry import CameraGeometry
 from robot_models.camera.projection import CameraProjection
-from robot_models.camera.fov import CameraFOV
 
 
 class VisibilityConstraint:
@@ -24,7 +25,6 @@ class VisibilityConstraint:
         target_position_world: np.ndarray,
     ) -> np.ndarray:
         """Project target world position into image coordinates."""
-
         target_position_optical = (
             CameraGeometry.target_position_optical(
                 transform_world_optical=transform_world_optical,
@@ -41,11 +41,11 @@ class VisibilityConstraint:
         transform_world_optical: np.ndarray,
         target_position_world: np.ndarray,
     ) -> np.ndarray:
-        """Return image-boundary visibility residuals.
+        """
+        Return image-boundary visibility residuals.
 
         Positive values indicate satisfied constraints.
         """
-
         pixel = self.pixel(
             transform_world_optical,
             target_position_world,
@@ -73,7 +73,6 @@ class VisibilityConstraint:
         target_position_world: np.ndarray,
     ) -> bool:
         """Return True when target is visible in the image."""
-
         try:
             residual = self.residual(
                 transform_world_optical,

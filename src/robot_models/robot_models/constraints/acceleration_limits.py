@@ -23,17 +23,17 @@ class AccelerationLimits:
 
         if lower.ndim != 1:
             raise ValueError(
-                "lower must be a 1D vector"
+                'lower must be a 1D vector'
             )
 
         if upper.shape != lower.shape:
             raise ValueError(
-                "upper must match lower shape"
+                'upper must match lower shape'
             )
 
         if np.any(lower > upper):
             raise ValueError(
-                "lower limits must not exceed upper limits"
+                'lower limits must not exceed upper limits'
             )
 
         self.lower = lower
@@ -46,7 +46,6 @@ class AccelerationLimits:
         dt: float,
     ) -> np.ndarray:
         """Compute finite-difference generalized acceleration."""
-
         generalized_velocity_current = np.asarray(
             generalized_velocity_current,
             dtype=float,
@@ -59,17 +58,17 @@ class AccelerationLimits:
 
         if generalized_velocity_current.shape != self.lower.shape:
             raise ValueError(
-                "current velocity must match limit shape"
+                'current velocity must match limit shape'
             )
 
         if generalized_velocity_previous.shape != self.lower.shape:
             raise ValueError(
-                "previous velocity must match limit shape"
+                'previous velocity must match limit shape'
             )
 
         if dt <= 0.0:
             raise ValueError(
-                "dt must be positive"
+                'dt must be positive'
             )
 
         return (
@@ -84,7 +83,6 @@ class AccelerationLimits:
         dt: float,
     ) -> np.ndarray:
         """Return signed distance from acceleration boundaries."""
-
         generalized_acceleration = self.acceleration(
             generalized_velocity_current,
             generalized_velocity_previous,
@@ -115,7 +113,6 @@ class AccelerationLimits:
         dt: float,
     ) -> bool:
         """Return True when all acceleration limits are satisfied."""
-
         return bool(
             np.all(
                 self.residual(

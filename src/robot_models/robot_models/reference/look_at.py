@@ -17,14 +17,14 @@ class LookAtReference:
             dtype=float,
         ),
     ) -> np.ndarray:
-        """Return desired camera rotation R_W_E.
+        """
+        Return desired camera rotation R_W_E.
 
         Camera optical-frame convention:
             x -> right
             y -> down
             z -> forward
         """
-
         camera_position_world = np.asarray(
             camera_position_world,
             dtype=float,
@@ -42,17 +42,17 @@ class LookAtReference:
 
         if camera_position_world.shape != (3,):
             raise ValueError(
-                "camera_position_world must have shape (3,)"
+                'camera_position_world must have shape (3,)'
             )
 
         if target_position_world.shape != (3,):
             raise ValueError(
-                "target_position_world must have shape (3,)"
+                'target_position_world must have shape (3,)'
             )
 
         if world_up.shape != (3,):
             raise ValueError(
-                "world_up must have shape (3,)"
+                'world_up must have shape (3,)'
             )
 
         direction = (
@@ -64,7 +64,7 @@ class LookAtReference:
 
         if np.isclose(direction_norm, 0.0):
             raise ValueError(
-                "camera and target positions must be different"
+                'camera and target positions must be different'
             )
 
         z_axis_world = (
@@ -75,7 +75,7 @@ class LookAtReference:
 
         if np.isclose(world_up_norm, 0.0):
             raise ValueError(
-                "world_up must be non-zero"
+                'world_up must be non-zero'
             )
 
         up_axis_world = (
@@ -126,7 +126,7 @@ class LookAtReference:
             rotation_world_camera
         ):
             raise RuntimeError(
-                "failed to construct a valid rotation matrix"
+                'failed to construct a valid rotation matrix'
             )
 
         return rotation_world_camera

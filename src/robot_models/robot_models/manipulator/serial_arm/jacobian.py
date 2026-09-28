@@ -27,7 +27,7 @@ class ArmJacobian:
 
         if joint_axes.shape != (self.DOF, 3):
             raise ValueError(
-                "joint_axes must have shape (4, 3)"
+                'joint_axes must have shape (4, 3)'
             )
 
         axis_norms = np.linalg.norm(
@@ -37,7 +37,7 @@ class ArmJacobian:
 
         if np.any(np.isclose(axis_norms, 0.0)):
             raise ValueError(
-                "joint axes must be non-zero"
+                'joint axes must be non-zero'
             )
 
         self.joint_axes = (
@@ -56,7 +56,6 @@ class ArmJacobian:
         joint_positions: np.ndarray,
     ) -> np.ndarray:
         """Return the 6x4 geometric Jacobian in the robot base frame."""
-
         joint_positions = np.asarray(
             joint_positions,
             dtype=float,
@@ -64,7 +63,7 @@ class ArmJacobian:
 
         if joint_positions.shape != (self.DOF,):
             raise ValueError(
-                "joint_positions must have shape (4,)"
+                'joint_positions must have shape (4,)'
             )
 
         base_mount_height = (

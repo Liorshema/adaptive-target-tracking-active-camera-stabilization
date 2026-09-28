@@ -12,12 +12,12 @@ class DifferentialKinematics:
         desired_twist: np.ndarray,
         damping: float = 0.0,
     ) -> np.ndarray:
-        """Compute desired joint rates from a desired 6D twist.
+        """
+        Compute desired joint rates from a desired 6D twist.
 
         Uses the Moore-Penrose pseudoinverse when damping is zero.
         Uses damped least squares when damping is positive.
         """
-
         jacobian = np.asarray(jacobian, dtype=float)
         desired_twist = np.asarray(
             desired_twist,
@@ -26,17 +26,17 @@ class DifferentialKinematics:
 
         if jacobian.ndim != 2:
             raise ValueError(
-                "jacobian must be a 2D matrix"
+                'jacobian must be a 2D matrix'
             )
 
         if desired_twist.shape != (jacobian.shape[0],):
             raise ValueError(
-                "desired_twist dimension must match jacobian rows"
+                'desired_twist dimension must match jacobian rows'
             )
 
         if damping < 0.0:
             raise ValueError(
-                "damping must be non-negative"
+                'damping must be non-negative'
             )
 
         if damping == 0.0:

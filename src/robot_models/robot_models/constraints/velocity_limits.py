@@ -23,17 +23,17 @@ class VelocityLimits:
 
         if lower.ndim != 1:
             raise ValueError(
-                "lower must be a 1D vector"
+                'lower must be a 1D vector'
             )
 
         if upper.shape != lower.shape:
             raise ValueError(
-                "upper must match lower shape"
+                'upper must match lower shape'
             )
 
         if np.any(lower > upper):
             raise ValueError(
-                "lower limits must not exceed upper limits"
+                'lower limits must not exceed upper limits'
             )
 
         self.lower = lower
@@ -44,7 +44,6 @@ class VelocityLimits:
         generalized_velocity: np.ndarray,
     ) -> np.ndarray:
         """Return signed distance from velocity boundaries."""
-
         generalized_velocity = np.asarray(
             generalized_velocity,
             dtype=float,
@@ -52,7 +51,7 @@ class VelocityLimits:
 
         if generalized_velocity.shape != self.lower.shape:
             raise ValueError(
-                "generalized_velocity must match limit shape"
+                'generalized_velocity must match limit shape'
             )
 
         lower_residual = (
@@ -77,7 +76,6 @@ class VelocityLimits:
         generalized_velocity: np.ndarray,
     ) -> bool:
         """Return True when all velocity limits are satisfied."""
-
         return bool(
             np.all(
                 self.residual(

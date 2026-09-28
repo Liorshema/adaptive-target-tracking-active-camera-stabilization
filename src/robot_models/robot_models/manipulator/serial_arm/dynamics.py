@@ -14,11 +14,11 @@ class ArmDynamics:
         joint_velocities: np.ndarray,
         joint_torques: np.ndarray,
     ) -> np.ndarray:
-        """Compute joint accelerations from manipulator dynamics.
+        """
+        Compute joint accelerations from manipulator dynamics.
 
         M(q) q_ddot + C(q, q_dot) q_dot + g(q) = tau
         """
-
         mass_matrix = np.asarray(
             mass_matrix,
             dtype=float,
@@ -46,29 +46,29 @@ class ArmDynamics:
 
         if mass_matrix.ndim != 2:
             raise ValueError(
-                "mass_matrix must be two-dimensional"
+                'mass_matrix must be two-dimensional'
             )
 
         n = mass_matrix.shape[0]
 
         if mass_matrix.shape != (n, n):
             raise ValueError(
-                "mass_matrix must be square"
+                'mass_matrix must be square'
             )
 
         if coriolis_matrix.shape != (n, n):
             raise ValueError(
-                "coriolis_matrix must match mass_matrix"
+                'coriolis_matrix must match mass_matrix'
             )
 
         for name, vector in (
-            ("gravity_vector", gravity_vector),
-            ("joint_velocities", joint_velocities),
-            ("joint_torques", joint_torques),
+            ('gravity_vector', gravity_vector),
+            ('joint_velocities', joint_velocities),
+            ('joint_torques', joint_torques),
         ):
             if vector.shape != (n,):
                 raise ValueError(
-                    f"{name} must have shape ({n},)"
+                    f'{name} must have shape ({n},)'
                 )
 
         generalized_force = (

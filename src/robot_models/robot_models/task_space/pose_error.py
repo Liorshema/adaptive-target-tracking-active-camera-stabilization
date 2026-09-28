@@ -16,7 +16,6 @@ class PoseError:
         transform_world_camera_desired: np.ndarray,
     ) -> np.ndarray:
         """Return 6D pose error [position_error, rotation_error]."""
-
         transform_world_camera = np.asarray(
             transform_world_camera,
             dtype=float,
@@ -29,12 +28,12 @@ class PoseError:
 
         if transform_world_camera.shape != (4, 4):
             raise ValueError(
-                "transform_world_camera must have shape (4, 4)"
+                'transform_world_camera must have shape (4, 4)'
             )
 
         if transform_world_camera_desired.shape != (4, 4):
             raise ValueError(
-                "transform_world_camera_desired must have shape (4, 4)"
+                'transform_world_camera_desired must have shape (4, 4)'
             )
 
         position_world_camera = (

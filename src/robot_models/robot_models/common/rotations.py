@@ -5,7 +5,6 @@ import numpy as np
 
 def skew(vector: np.ndarray) -> np.ndarray:
     """Return the 3x3 skew-symmetric matrix of a 3D vector."""
-
     vector = np.asarray(
         vector,
         dtype=float,
@@ -13,7 +12,7 @@ def skew(vector: np.ndarray) -> np.ndarray:
 
     if vector.shape != (3,):
         raise ValueError(
-            "vector must have shape (3,)"
+            'vector must have shape (3,)'
         )
 
     x, y, z = vector
@@ -33,7 +32,6 @@ def axis_angle_rotation(
     angle: float,
 ) -> np.ndarray:
     """Return rotation matrix from axis-angle representation."""
-
     axis = np.asarray(
         axis,
         dtype=float,
@@ -41,14 +39,14 @@ def axis_angle_rotation(
 
     if axis.shape != (3,):
         raise ValueError(
-            "axis must have shape (3,)"
+            'axis must have shape (3,)'
         )
 
     axis_norm = np.linalg.norm(axis)
 
     if axis_norm == 0.0:
         raise ValueError(
-            "axis must be non-zero"
+            'axis must be non-zero'
         )
 
     axis = axis / axis_norm
@@ -65,12 +63,12 @@ def axis_angle_rotation(
 def rotation_log_vector(
     rotation: np.ndarray,
 ) -> np.ndarray:
-    """Return the SO(3) logarithm as a 3D rotation vector.
+    """
+    Return the SO(3) logarithm as a 3D rotation vector.
 
     The returned vector has direction equal to the rotation axis
     and magnitude equal to the rotation angle.
     """
-
     rotation = np.asarray(
         rotation,
         dtype=float,
@@ -78,12 +76,12 @@ def rotation_log_vector(
 
     if rotation.shape != (3, 3):
         raise ValueError(
-            "rotation must have shape (3, 3)"
+            'rotation must have shape (3, 3)'
         )
 
     if not is_rotation_matrix(rotation):
         raise ValueError(
-            "rotation must be a valid rotation matrix"
+            'rotation must be a valid rotation matrix'
         )
 
     cos_angle = (
@@ -124,7 +122,6 @@ def is_rotation_matrix(
     atol: float = 1e-8,
 ) -> bool:
     """Return True if the matrix belongs to SO(3)."""
-
     rotation = np.asarray(
         rotation,
         dtype=float,
@@ -156,7 +153,6 @@ def rotation_x(
     angle: float,
 ) -> np.ndarray:
     """Return rotation matrix about the positive x-axis."""
-
     return axis_angle_rotation(
         np.array([1.0, 0.0, 0.0]),
         angle,
@@ -167,7 +163,6 @@ def rotation_y(
     angle: float,
 ) -> np.ndarray:
     """Return rotation matrix about the positive y-axis."""
-
     return axis_angle_rotation(
         np.array([0.0, 1.0, 0.0]),
         angle,
@@ -178,13 +173,11 @@ def rotation_z(
     angle: float,
 ) -> np.ndarray:
     """Return rotation matrix about the positive z-axis."""
-
     return axis_angle_rotation(
         np.array([0.0, 0.0, 1.0]),
         angle,
     )
     """Return rotation matrix about the z-axis."""
-
     return axis_angle_rotation(
         axis=np.array([0.0, 0.0, 1.0]),
         angle=angle,

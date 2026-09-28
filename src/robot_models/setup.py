@@ -1,8 +1,8 @@
 from setuptools import find_packages, setup
-from glob import glob
-import os
+
 
 package_name = 'robot_models'
+
 
 setup(
     name=package_name,
@@ -19,10 +19,6 @@ setup(
             'share/' + package_name,
             ['package.xml'],
         ),
-        (
-            os.path.join('share', package_name, 'config'),
-            glob('config/*.yaml'),
-        ),
     ],
 
     install_requires=[
@@ -36,8 +32,8 @@ setup(
     maintainer_email='liorshema@gmail.com',
 
     description=(
-        'Mathematical models for the mobile base, robotic arm, camera, '
-        'target motion, and whole-body mobile manipulator system.'
+        'Mathematical models for generic robot bases, manipulators, '
+        'camera geometry, and whole-body systems.'
     ),
 
     license='Apache-2.0',

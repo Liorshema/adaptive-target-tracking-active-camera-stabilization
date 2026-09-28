@@ -13,12 +13,12 @@ class CameraFOV:
     ) -> None:
         if image_width <= 0:
             raise ValueError(
-                "image_width must be positive"
+                'image_width must be positive'
             )
 
         if image_height <= 0:
             raise ValueError(
-                "image_height must be positive"
+                'image_height must be positive'
             )
 
         self.image_width = int(image_width)
@@ -27,7 +27,6 @@ class CameraFOV:
     @property
     def bounds(self) -> np.ndarray:
         """Return image bounds [u_min, u_max, v_min, v_max]."""
-
         return np.array(
             [
                 0.0,
@@ -43,7 +42,6 @@ class CameraFOV:
         pixel: np.ndarray,
     ) -> bool:
         """Return True if pixel lies inside the image."""
-
         pixel = np.asarray(
             pixel,
             dtype=float,
@@ -51,7 +49,7 @@ class CameraFOV:
 
         if pixel.shape != (2,):
             raise ValueError(
-                "pixel must have shape (2,)"
+                'pixel must have shape (2,)'
             )
 
         u, v = pixel
@@ -69,7 +67,8 @@ class CameraFOV:
         self,
         pixel: np.ndarray,
     ) -> float:
-        """Return signed distance to the nearest image boundary.
+        """
+        Return signed distance to the nearest image boundary.
 
         Positive:
             pixel is inside the image.
@@ -80,7 +79,6 @@ class CameraFOV:
         Negative:
             pixel is outside the image.
         """
-
         pixel = np.asarray(
             pixel,
             dtype=float,
@@ -88,7 +86,7 @@ class CameraFOV:
 
         if pixel.shape != (2,):
             raise ValueError(
-                "pixel must have shape (2,)"
+                'pixel must have shape (2,)'
             )
 
         u, v = pixel

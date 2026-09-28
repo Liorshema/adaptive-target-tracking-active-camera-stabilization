@@ -14,7 +14,6 @@ class PoseReference:
         desired_rotation_world_camera: np.ndarray,
     ) -> np.ndarray:
         """Return desired camera transform T_W_E_d."""
-
         desired_position_world = np.asarray(
             desired_position_world,
             dtype=float,
@@ -27,12 +26,12 @@ class PoseReference:
 
         if desired_position_world.shape != (3,):
             raise ValueError(
-                "desired_position_world must have shape (3,)"
+                'desired_position_world must have shape (3,)'
             )
 
         if desired_rotation_world_camera.shape != (3, 3):
             raise ValueError(
-                "desired_rotation_world_camera must have shape (3, 3)"
+                'desired_rotation_world_camera must have shape (3, 3)'
             )
 
         return make_transform(

@@ -23,17 +23,17 @@ class ActuatorLimits:
 
         if lower.ndim != 1:
             raise ValueError(
-                "lower must be a 1D vector"
+                'lower must be a 1D vector'
             )
 
         if upper.shape != lower.shape:
             raise ValueError(
-                "upper must match lower shape"
+                'upper must match lower shape'
             )
 
         if np.any(lower > upper):
             raise ValueError(
-                "lower limits must not exceed upper limits"
+                'lower limits must not exceed upper limits'
             )
 
         self.lower = lower
@@ -44,7 +44,6 @@ class ActuatorLimits:
         command: np.ndarray,
     ) -> np.ndarray:
         """Return signed distance from actuator boundaries."""
-
         command = np.asarray(
             command,
             dtype=float,
@@ -52,7 +51,7 @@ class ActuatorLimits:
 
         if command.shape != self.lower.shape:
             raise ValueError(
-                "command must match limit shape"
+                'command must match limit shape'
             )
 
         lower_residual = (
@@ -75,7 +74,6 @@ class ActuatorLimits:
         command: np.ndarray,
     ) -> bool:
         """Return True when all actuator limits are satisfied."""
-
         return bool(
             np.all(
                 self.residual(command) >= 0.0
