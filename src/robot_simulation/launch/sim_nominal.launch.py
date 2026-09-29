@@ -62,7 +62,7 @@ def launch_setup(context):
     world_xacro_file = (
         simulation_share
         / 'worlds'
-        / 'greenhouse.sdf.xacro'
+        / 'tracking_testbed.sdf.xacro'
     )
 
     terrain_config_file = Path(
@@ -72,7 +72,7 @@ def launch_setup(context):
     )
 
     generated_world_file = Path(
-        '/tmp/greenhouse_generated.sdf'
+        '/tmp/tracking_testbed_generated.sdf'
     )
 
     # --------------------------------------------------
@@ -149,7 +149,7 @@ def launch_setup(context):
         executable='create',
         arguments=[
             '-world',
-            'greenhouse',
+            'tracking_testbed',
 
             '-topic',
             'robot_description',

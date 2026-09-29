@@ -28,7 +28,7 @@
     value="${terrain['friction']['mu2']}"/>
 
 
-  <world name="greenhouse">
+  <world name="tracking_testbed">
 
     <!-- ============================================= -->
     <!-- Physics                                       -->
