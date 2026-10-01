@@ -1,0 +1,32 @@
+estimation_node:
+  ros__parameters:
+
+    joint_count: 4
+
+    robot_initial_state:
+      [0.0, 0.0, 0.0, 0.0, 0.0,
+       0.0, 0.0, 0.0, 0.0,
+       0.0, 0.0, 0.0, 0.0]
+
+    robot_initial_covariance_diagonal:
+      [1.0, 1.0, 1.0, 1.0, 1.0,
+       1.0, 1.0, 1.0, 1.0,
+       1.0, 1.0, 1.0, 1.0]
+
+    linear_acceleration_noise_std: 0.1
+    angular_acceleration_noise_std: 0.05
+    joint_acceleration_noise_std: 0.1
+
+    wheel_linear_velocity_variance: 0.05
+    wheel_angular_velocity_variance: 0.02
+
+    imu_yaw_rate_variance: 0.01
+
+    joint_position_variance: 0.02
+    joint_velocity_variance: 0.02
+
+    imu_topic: "/imu"
+    wheel_odometry_topic: "/wheel/odometry"
+    joint_states_topic: "/joint_states"
+
+    robot_state_topic: "/estimation/robot_state"
